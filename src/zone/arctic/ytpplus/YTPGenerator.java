@@ -123,7 +123,6 @@ public class YTPGenerator {
                 cleanUp();
 
                 try {
-                    PrintWriter writer = new PrintWriter(toolBox.TEMP+"concat.txt", "UTF-8");
                     for (int i = 0; i < MAX_CLIPS; i++) {
                         System.out.println("STARTING CLIP " + "video" + i);
                         doneCount = (double) i/MAX_CLIPS;
@@ -238,10 +237,6 @@ public class YTPGenerator {
     
     
     public void cleanUp() {
-        //Create concatenation text file
-        File text = new File(toolBox.TEMP+"concat.txt");
-        if (text.exists())
-            text.delete();
         File mp4 = new File(toolBox.TEMP + "temp.mp4");
         if (mp4.exists())
             mp4.delete(); 
