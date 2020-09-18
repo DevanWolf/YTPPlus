@@ -81,19 +81,7 @@ public class EffectsFactory {
             if (in.exists())
                 in.renameTo(temp);
             String randomSound = pickSound();
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -i "+ toolBox.SOUNDS + randomSound
-                    + " -filter_complex \"[1:a]volume=1,apad[A];[0:a][A]amerge[out]\""
-                    + " -ac 2"
-                    //+ " -c:v copy"
-                    
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    
-                    + " -map 0:v"
-                    + " -map [out]"
-                    + " -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -i "+ toolBox.SOUNDS + randomSound + " -c:v copy -ar 44100 -ac 2 -filter_complex \"[1:a]apad[A];[0:a][A]amix,volume=2[out]\" -map 0:v -map [out] -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -106,43 +94,15 @@ public class EffectsFactory {
             String randomSound = pickSound();
             String soundLength = toolBox.getLength(toolBox.SOUNDS+randomSound);
             System.out.println("Doing a mute now. " + randomSound + " length: " + soundLength + ".");
-            //Scanner userInput = new Scanner(System.in);
-            //String input = userInput.nextLine();
-            
-            //if (!input.isEmpty()) {
-                File in = new File(video);
-                File temp = new File(toolBox.TEMP + "temp.mp4");
-                File temp2 = new File(toolBox.TEMP + "temp2.mp4");
-                if (in.exists())
-                    in.renameTo(temp);
-                if (temp2.exists())
-                    temp2.delete();
-                String command1 = toolBox.FFMPEG
-                        + " -i " + toolBox.TEMP + "temp.mp4"
-                        + " -ar 44100"
-                        + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                        + " -af \"volume=0\" -y " + toolBox.TEMP + "temp2.mp4";
-                String command2 = toolBox.FFMPEG
-                        + " -i " + toolBox.TEMP + "temp2.mp4"
-                        + " -i \"" + toolBox.SOUNDS +""+randomSound+"\""
-                        + " -to "+soundLength
-                        + " -ar 44100"
-                        + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                        + " -filter_complex \"[1:a]volume=1,apad[A]; [0:a][A]amerge[out]\" -ac 2 -map 0:v -map [out] -y " + video;
-                //String command1 = "lib/ffmpeg -i " + toolBox.TEMP + "temp.mp4 -i sounds/"+randomSound+" -c:v copy -map 0:v:0 -map 1:a:0 -shortest "+ video;
-                CommandLine cmdLine = CommandLine.parse(command1);
-                DefaultExecutor executor = new DefaultExecutor();
-                int exitValue = executor.execute(cmdLine);
-
-                cmdLine = CommandLine.parse(command2);
-                executor = new DefaultExecutor();
-                exitValue = executor.execute(cmdLine);
-
-                temp.delete();
-                temp2.delete();
-            //}
-            //System.out.println("Did a mute sfx. Type anything to verify.");
-
+            File in = new File(video);
+            File temp = new File(toolBox.TEMP + "temp.mp4");
+            if (in.exists())
+                in.renameTo(temp);
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -i " + toolBox.SOUNDS + randomSound + " -map 0:v -map 1:a -c:v copy -ar 44100 -ac 2 -to " + soundLength + " -shortest -y " + video;
+            CommandLine cmdLine = CommandLine.parse(command);
+            DefaultExecutor executor = new DefaultExecutor();
+            int exitValue = executor.execute(cmdLine);
+            temp.delete();
         } catch (Exception ex) {System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + "\n" +ex);}
     }   
     public void effect_Reverse(String video){
@@ -150,32 +110,14 @@ public class EffectsFactory {
         try {
             File in = new File(video);
             File temp = new File(toolBox.TEMP + "temp.mp4");
-            File temp2 = new File(toolBox.TEMP + "temp2.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            if (temp2.exists())
-                temp2.delete();
-            String command1 = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4 -map 0"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -af \"areverse\" -y " + toolBox.TEMP + "temp2.mp4";
-            String command2 = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp2.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -vf reverse -y " + video;
-
-            CommandLine cmdLine = CommandLine.parse(command1);
+            String randomSound = pickSound();
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -vf reverse -af areverse -y " + video;
+            CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
-            
-            cmdLine = CommandLine.parse(command2);
-            executor = new DefaultExecutor();
-            exitValue = executor.execute(cmdLine);
-            
             temp.delete();
-            temp2.delete();
         } catch (Exception ex) {System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + "\n" +ex);}
     }  
     
@@ -187,11 +129,7 @@ public class EffectsFactory {
             File temp = new File(toolBox.TEMP + "temp.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -filter:v setpts=0.5*PTS -filter:a atempo=2.0 -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -vf setpts=.5*PTS -af atempo=2 -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -206,11 +144,7 @@ public class EffectsFactory {
             File temp = new File(toolBox.TEMP + "temp.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -filter:v setpts=2*PTS -filter:a atempo=0.5 -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -vf setpts=2*PTS -af atempo=.5 -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -227,11 +161,7 @@ public class EffectsFactory {
             File temp = new File(toolBox.TEMP + "temp.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -af chorus=0.5:0.9:50|60|40:0.4|0.32|0.3:0.25|0.4|0.3:2|2.3|1.3 -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -c:v copy -af chorus=0.5:0.9:50|60|40:0.4|0.32|0.3:0.25|0.4|0.3:2|2.3|1.3 -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -246,11 +176,7 @@ public class EffectsFactory {
             File temp = new File(toolBox.TEMP + "temp.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -af vibrato=f=7.0:d=0.5 -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -c:v copy -af vibrato=f=7:d=.5 -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -265,11 +191,7 @@ public class EffectsFactory {
             File temp = new File(toolBox.TEMP + "temp.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -filter:v setpts=2*PTS -af asetrate=44100*0.5,aresample=44100 -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -vf setpts=2*PTS -af asetrate=22050,aresample=44100 -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -284,11 +206,7 @@ public class EffectsFactory {
             File temp = new File(toolBox.TEMP + "temp.mp4");
             if (in.exists())
                 in.renameTo(temp);
-            String command = toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"
-                    + " -ar 44100"
-                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
-                    + " -filter:v setpts=0.5*PTS -af asetrate=44100*2,aresample=44100 -y " + video;
+            String command = toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -vf setpts=.5*PTS -af asetrate=88200,aresample=44100 -y " + video;
             CommandLine cmdLine = CommandLine.parse(command);
             DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute(cmdLine);
@@ -301,13 +219,9 @@ public class EffectsFactory {
         try {
             File in = new File(video);
             
-            File temp = new File(toolBox.TEMP + "temp.mp4"); //og file
-            File temp2 = new File(toolBox.TEMP + "temp2.mp4"); //1st cut
-            File temp3 = new File(toolBox.TEMP + "temp3.mp4"); //backwards (silent
-            File temp4 = new File(toolBox.TEMP + "temp4.mp4"); //forwards (silent
-            File temp5 = new File(toolBox.TEMP + "temp5.mp4"); //backwards & forwards concatenated
-            File temp6 = new File(toolBox.TEMP + "temp6.mp4"); //backwards & forwards concatenated
-            File temp7 = new File(toolBox.TEMP + "temp7.mp4"); //backwards & forwards concatenated
+            File temp = new File(toolBox.TEMP + "temp.mp4");
+            File temp2 = new File(toolBox.TEMP + "temp2.mp4");
+            File temp3 = new File(toolBox.TEMP + "temp3.mp4");
             
             // final result is backwards & forwards concatenated with music
             
@@ -317,75 +231,16 @@ public class EffectsFactory {
                 temp2.delete();
             if (temp3.exists())
                 temp3.delete();
-            if (temp4.exists())
-                temp4.delete();
-            if (temp5.exists())
-                temp5.delete();
-            if (temp6.exists())
-                temp6.delete();
-            if (temp7.exists())
-                temp7.delete();
             
             String randomSound = pickMusic();
-            
-            /*
-            lib/ffmpeg -i stu.mp4 -map 0 -ar 44100 -to 00:00:00.5 -vf "scale=640x480,setsar=1:1" -an -y " + toolBox.TEMP + "temp2.mp4
-            lib/ffmpeg -i " + toolBox.TEMP + "temp2.mp4 -map 0 -ar 44100 -vf "reverse,scale=640x480,setsar=1:1" -y " + toolBox.TEMP + "temp3.mp4
-            lib/ffmpeg -i " + toolBox.TEMP + "temp3.mp4 -map 0 -ar 44100 -vf "reverse,scale=640x480,setsar=1:1" -y " + toolBox.TEMP + "temp4.mp4
-            lib/ffmpeg -i " + toolBox.TEMP + "temp3.mp4 -i " + toolBox.TEMP + "temp4.mp4 -filter_complex "[0:v:0][1:v:0][0:v:0][1:v:0][0:v:0][1:v:0][0:v:0][1:v:0]concat=n=8:v=1[outv]" -map "[outv]" -c:v libx264 -shortest -y " + toolBox.TEMP + "temp5.mp4
-            lib/ffmpeg -i " + toolBox.TEMP + "temp5.mp4 -map 0 -ar 44100 -vf "setpts=0.5*PTS,scale=640x480,setsar=1:1" -af "atempo=2.0" -shortest -y " + toolBox.TEMP + "temp6.mp4
-            lib/ffmpeg -i " + toolBox.TEMP + "temp6.mp4 -i music/dancemusic.mp3 -c:v libx264 -map 0:v:0 -map 1:a:0 -vf "scale=640x480,setsar=1:1,fps=fps=30" -shortest -y " + toolBox.TEMP + "temp7.mp4
-            */
             ArrayList<String> commands = new ArrayList<String>();
-            int randomTime = randomInt(3,9);
-            int randomTime2 = randomInt(0,1);
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4 -map 0"// -c:v copy"
-                    + " -ar 44100"
-                    + " -to 00:00:0"+randomTime2+"." + randomTime
-                    + " -vf scale=640x480,setsar=1:1"
-                    + " -an"
-                    + " -y " + toolBox.TEMP + "temp2.mp4");
+            int randomTime = randomDouble(0.3,2.0);
+            commands.add(toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -an -vf setpts=.5*PTS -to " + randomTime + " -y " + toolBox.TEMP + "temp2.mp4");
             
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp2.mp4 -map 0"// -c:v copy"
-                    + " -ar 44100"
-                    + " -vf reverse,scale=640x480,setsar=1:1"
-                    + " -y " + toolBox.TEMP + "temp3.mp4");
+            commands.add(toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp2.mp4 -vf reverse -y " + toolBox.TEMP + "temp3.mp4");
             
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp3.mp4"
-                    + " -ar 44100"
-                    + " -vf reverse,scale=640x480,setsar=1:1"
-                    + " -y " + toolBox.TEMP + "temp4.mp4");
+            commands.add(toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp3.mp4 -i " + toolBox.TEMP + "temp2.mp4 -i " + toolBox.MUSIC + randomSound + " -filter_complex \"[0:v][1:v][0:v][1:v][0:v][1:v][0:v][1:v]concat=n=8:v=1[out]\" -map [out] -map 2:a -shortest -y " + toolBox.TEMP + "temp4.mp4");
             
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp3.mp4"
-                    + " -i " + toolBox.TEMP + "temp4.mp4"
-                    + " -filter_complex \"[0:v:0][1:v:0][0:v:0][1:v:0][0:v:0][1:v:0][0:v:0][1:v:0]concat=n=8:v=1[outv]\""
-                    + " -map \"[outv]\""
-                    + " -c:v libx264 -shortest"
-                    + " -y " + toolBox.TEMP + "temp5.mp4");
-            
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp5.mp4"
-                    + " -map 0"
-                    + " -ar 44100"
-                    + " -vf \"setpts=0.5*PTS,scale=640x480,setsar=1:1\""
-                    + " -af \"atempo=2.0\""
-                    + " -shortest"
-                    + " -y " + toolBox.TEMP + "temp6.mp4");
-            
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp6.mp4"
-                    + " -i " + toolBox.MUSIC + randomSound
-                    + " -c:v libx264"
-                    + " -map 0:v:0 -map 1:a:0"
-                    + " -vf \"scale=640x480,setsar=1:1,fps=fps=30\""
-                    + " -shortest"
-                    + " -y " + video);
-            
-            //String command = "lib/ffmpeg -i " + toolBox.TEMP + "temp.mp4 -i sounds/"+randomSound+" -c:v copy -map 0:v:0 -map 1:a:0 -shortest "+ video;
             for (String command : commands) {
                 CommandLine cmdLine = CommandLine.parse(command);
                 DefaultExecutor executor = new DefaultExecutor();
@@ -395,10 +250,6 @@ public class EffectsFactory {
             temp.delete();
             temp2.delete();
             temp3.delete();
-            temp4.delete();
-            temp5.delete();
-            temp6.delete();
-            temp7.delete();
         } catch (Exception ex) {System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + "\n" +ex);}
     }  
     
@@ -409,56 +260,46 @@ public class EffectsFactory {
             
             File temp = new File(toolBox.TEMP + "temp.mp4"); //og file
             
-            // final result is backwards & forwards concatenated with music
-            
             if (in.exists())
                 in.renameTo(temp);
             
             ArrayList<String> commands = new ArrayList<String>();
 
-            commands.add(toolBox.FFMPEG
-                    + " -i " + toolBox.TEMP + "temp.mp4"// -c:v copy"
-                    + " -vf \"select=gte(n\\,1)\""
-                    + " -vframes 1"
-                    + " -y " + toolBox.TEMP + "squidward0.png");
+            commands.add(toolBox.FFMPEG + " -i " + toolBox.TEMP + "temp.mp4 -vf \"select=gte(n\\,1)\" -vframes 1 -y " + toolBox.TEMP + "squidward0.png");
             
             for (int i=1; i<6; i++) { 
                 String effect = "";
-                int random = randomInt(0,6);
+                int random = randomInt(0,7);
                 switch (random) {
                     case 0: 
-                        effect = " -flop";
+                        effect = "flop";
                         break;
                     case 1:
-                        effect = " -flip";
+                        effect = "flip";
                         break;
                     case 2:
-                        effect = " -implode -" + randomInt(1,3);
+                        effect = "rotate 180";
                         break;
                     case 3:
-                        effect = " -implode " + randomInt(1,3);
+                        effect = "implode -" + randomInt(1,3);
                         break;
                     case 4:
-                        effect = " -swirl " + randomInt(1,180);
+                        effect = "implode " + randomInt(1,3);
                         break;
                     case 5:
-                        effect = " -swirl -" + randomInt(1,180);
+                        effect = "swirl " + randomInt(1,180);
                         break;
                     case 6:
-                        effect = " -channel RGB -negate";
+                        effect = "swirl -" + randomInt(1,180);
                         break;
-                    //case 7:
-                    //    effect = " -virtual-pixel Black +distort Cylinder2Plane " + randomInt(1,90);
-                    //    break;
+                    case 7:
+                        effect = "channel RGB -negate";
+                        break;
                 }
-                commands.add(toolBox.MAGICK
-                        + " convert " + toolBox.TEMP + "squidward0.png"
-                        + effect
-                        + " " + toolBox.TEMP + "squidward" + i + ".png"
+                commands.add(toolBox.MAGICK + " convert " + toolBox.TEMP + "squidward0.png -" + effect + " " + toolBox.TEMP + "squidward" + i + ".png"
                 );
             }
-            commands.add(toolBox.MAGICK
-                    + " convert -size 640x480 canvas:black " + toolBox.TEMP + "black.png");
+            commands.add(toolBox.MAGICK + " convert -size 640x480 canvas:black " + toolBox.TEMP + "black.png");
             
             if (new File(toolBox.TEMP + "concatsquidward.txt").exists())
                 new File(toolBox.TEMP + "concatsquidward.txt").delete();
@@ -480,16 +321,7 @@ public class EffectsFactory {
                         "duration 0.467");
             writer.close();
             
-            commands.add(toolBox.FFMPEG
-                    + " -f concat"
-                    + " -i " + toolBox.TEMP + "concatsquidward.txt"
-                    + " -i " + toolBox.RESOURCES + "squidward/music.wav"
-                    + " -map 0:v:0 -map 1:a:0"
-                    + " -vf \"scale=640x480,setsar=1:1\""
-                    + " -pix_fmt yuv420p"
-                    + " -y " + video);
-            
-            //String command = "lib/ffmpeg -i " + toolBox.TEMP + "temp.mp4 -i sounds/"+randomSound+" -c:v copy -map 0:v:0 -map 1:a:0 -shortest "+ video;
+            commands.add(toolBox.FFMPEG + " -f concat -i " + toolBox.TEMP + "concatsquidward.txt -i " + toolBox.RESOURCES + "squidward/music.wav -pix_fmt yuv420p -shortest -y " + video);
             for (String command : commands) {
                 System.out.println("Executing: " + command);
                 CommandLine cmdLine = CommandLine.parse(command);
@@ -508,5 +340,15 @@ public class EffectsFactory {
     
     public static int randomInt(int min, int max) {
         return new Random().nextInt((max - min) + 1) + min;
+    }
+    public static double randomDouble(double min, double max)
+    {
+        double finalVal = -1;
+        while (finalVal < 0)
+        {
+            double x = (rnd.NextDouble() * ((max - min) + 0)) + min;
+            finalVal = Math.Round(x * 100.0) / 100.0;
+        }
+        return finalVal;
     }
 }
