@@ -38,7 +38,7 @@ public class YTPGenerator {
         //add some code to load this from a .cfg file later
         toolBox.FFMPEG = "ffmpeg";
         toolBox.FFPROBE = "ffprobe";
-        toolBox.MAGICK = "magick ";
+        toolBox.MAGICK = "magick";
         toolBox.TEMP = "temp/" + "job_" + System.currentTimeMillis() + "/";
         new File(toolBox.TEMP).mkdir();
         toolBox.SOURCES = "sources/";
@@ -125,22 +125,21 @@ public class YTPGenerator {
                 try {
                     PrintWriter writer = new PrintWriter(toolBox.TEMP+"concat.txt", "UTF-8");
                     for (int i = 0; i < MAX_CLIPS; i++) {
-                        doneCount = (double) i/MAX_CLIPS;
-                        String sourceToPick = sourceList.get(randomInt(0, sourceList.size() - 1));
-                        System.out.println(sourceToPick);
-                        System.out.println(toolBox.getLength(sourceToPick));
-                        TimeStamp boy = new TimeStamp(Double.parseDouble(toolBox.getLength(sourceToPick)));
-                        System.out.println(boy.getTimeStamp());
                         System.out.println("STARTING CLIP " + "video" + i);
-                        TimeStamp startOfClip = new TimeStamp(randomDouble(0.0, boy.getLengthSec() - MAX_STREAM_DURATION));
-                        //System.out.println("boy seconds = "+  boy.getLengthSec());
-                        TimeStamp endOfClip = new TimeStamp(startOfClip.getLengthSec() + randomDouble(MIN_STREAM_DURATION, MAX_STREAM_DURATION));
-                        System.out.println("Beginning of clip " + i + ": " + startOfClip.getTimeStamp());
-                        System.out.println("Ending of clip " + i + ": " + endOfClip.getTimeStamp() + ", in seconds: ");
+                        doneCount = (double) i/MAX_CLIPS;
                         if (randomInt(0, 15) == 15 && insertTransitionClips==true) {
                             System.out.println("Tryina use a diff source");
                             toolBox.copyVideo(toolBox.SOURCES + effectsFactory.pickSource(), toolBox.TEMP+"video" + i);
                         } else {
+                            String sourceToPick = sourceList.get(randomInt(0, sourceList.size() - 1));
+                            System.out.println(sourceToPick);
+                            System.out.println(toolBox.getLength(sourceToPick));
+                            TimeStamp boy = new TimeStamp(Double.parseDouble(toolBox.getLength(sourceToPick)));
+                            System.out.println(boy.getTimeStamp());
+                            TimeStamp startOfClip = new TimeStamp(randomDouble(0.0, boy.getLengthSec() - MAX_STREAM_DURATION));
+                            TimeStamp endOfClip = new TimeStamp(startOfClip.getLengthSec() + randomDouble(MIN_STREAM_DURATION, MAX_STREAM_DURATION));
+                            System.out.println("Beginning of clip " + i + ": " + startOfClip.getTimeStamp());
+                            System.out.println("Ending of clip " + i + ": " + endOfClip.getTimeStamp() + ", in seconds: ");
                             toolBox.snipVideo(sourceToPick, startOfClip, endOfClip, toolBox.TEMP+"video" + i);
                         }
                         //Add a random effect to the video
@@ -211,14 +210,12 @@ public class YTPGenerator {
 
                 } catch (Exception ex) { ex.printStackTrace();
                 }
-                //for (int i=0; i<100; i++) {
                 cleanUp();
                 rmDir(new File(toolBox.TEMP));
                 done = true;
             }
         };
         vidThread.start();
-        
     }
         
     
@@ -268,5 +265,4 @@ public class YTPGenerator {
         }
         file.delete();
     }
-    
 }
