@@ -142,60 +142,61 @@ public class YTPGenerator {
                             toolBox.snipVideo(sourceToPick, startOfClip, endOfClip, toolBox.TEMP+"video" + i);
                         }
                         //Add a random effect to the video
-                        int effect = randomInt(0, 16);
-                        System.out.println("STARTING EFFECT ON CLIP " + i + " EFFECT" + effect);
-                        String clipToWorkWith = toolBox.TEMP+"video" + i + ".mp4";
-                        switch (effect) {
-                            case 1:
-                                //random sound
-                                if (effect1==true)
-                                effectsFactory.effect_RandomSound(clipToWorkWith);
-                                break;
-                            case 2:
-                                if (effect2==true)
-                                //random sound
-                                effectsFactory.effect_RandomSoundMute(clipToWorkWith);
-                                break;
-                            case 3:
-                                if (effect3==true)
-                                effectsFactory.effect_Reverse(clipToWorkWith);
-                                break;
-                            case 4:
+                        int effect = randomInt(0, 15);
+                        if effect >= 1 {
+                            System.out.println("STARTING EFFECT ON CLIP " + i + " EFFECT" + effect);
+                            String clipToWorkWith = toolBox.TEMP+"video" + i + ".mp4";
+                            switch (effect) {
+                                case 1:
+                                    //random sound
+                                    if (effect1==true)
+                                    effectsFactory.effect_RandomSound(clipToWorkWith);
+                                    break;
+                                case 2:
+                                    if (effect2==true)
+                                    //random sound
+                                    effectsFactory.effect_RandomSoundMute(clipToWorkWith);
+                                    break;
+                                case 3:
+                                    if (effect3==true)
+                                    effectsFactory.effect_Reverse(clipToWorkWith);
+                                    break;
+                                case 4:
                                 if (effect4==true)
-                                effectsFactory.effect_SpeedUp(clipToWorkWith);
-                                break;
-                            case 5:
-                                if (effect5==true)
-                                effectsFactory.effect_SlowDown(clipToWorkWith);
-                                break;
-                            case 6:
-                                if (effect6==true)
-                                effectsFactory.effect_Chorus(clipToWorkWith);
-                                break;
-                            case 7:
-                                if (effect7==true)
-                                effectsFactory.effect_Vibrato(clipToWorkWith);
-                                break;
-                            case 8:
-                                if (effect8==true)
-                                effectsFactory.effect_HighPitch(clipToWorkWith);
-                                break;
-                            case 9:
-                                if (effect9==true)
-                                effectsFactory.effect_LowPitch(clipToWorkWith);
-                                break;
-                            case 10:
-                                if (effect10==true)
-                                effectsFactory.effect_Dance(clipToWorkWith);
-                                break;
-                            case 11:
-                                if (effect11==true)
-                                effectsFactory.effect_Squidward(clipToWorkWith);
-                                break;
-                            default:
-                                break;
+                                    effectsFactory.effect_SpeedUp(clipToWorkWith);
+                                    break;
+                                case 5:
+                                    if (effect5==true)
+                                    effectsFactory.effect_SlowDown(clipToWorkWith);
+                                    break;
+                                case 6:
+                                    if (effect6==true)
+                                    effectsFactory.effect_Chorus(clipToWorkWith);
+                                    break;
+                                case 7:
+                                    if (effect7==true)
+                                    effectsFactory.effect_Vibrato(clipToWorkWith);
+                                    break;
+                                case 8:
+                                    if (effect8==true)
+                                    effectsFactory.effect_HighPitch(clipToWorkWith);
+                                    break;
+                                case 9:
+                                    if (effect9==true)
+                                    effectsFactory.effect_LowPitch(clipToWorkWith);
+                                    break;
+                                case 10:
+                                    if (effect10==true)
+                                    effectsFactory.effect_Dance(clipToWorkWith);
+                                    break;
+                                case 11:
+                                    if (effect11==true)
+                                    effectsFactory.effect_Squidward(clipToWorkWith);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-
                     }
                     for (int i = 0; i < MAX_CLIPS; i++) {
                         if (new File(toolBox.TEMP+"video" + i + ".mp4").exists()) {
@@ -216,7 +217,6 @@ public class YTPGenerator {
         };
         vidThread.start();
     }
-        
     
     public boolean isDone() {
         return done;
@@ -235,7 +235,6 @@ public class YTPGenerator {
         return new Random().nextInt((max - min) + 1) + min;
     }
     
-    
     public void cleanUp() {
         File mp4 = new File(toolBox.TEMP + "temp.mp4");
         if (mp4.exists())
@@ -249,6 +248,7 @@ public class YTPGenerator {
         }
 
     }
+    
     public void rmDir(File file) {
         File[] contents = file.listFiles();
         if (contents != null) {
